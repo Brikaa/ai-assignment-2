@@ -100,6 +100,11 @@ form_board(3, 3, bomb1(2, 0), bomb2(0, 1), Board),
 bfs(Board, goal_test, perform_action, valid_state, Steps),
 last(Steps, Sol).
 */
+/*
+form_board(2, 4, bomb1(1, 1), bomb2(2, 1), Board),
+bfs(Board, goal_test, perform_action, valid_state, Steps),
+last(Steps, Sol).
+*/
 
 interactive() :-
     write("Enter the number of rows"),nl,

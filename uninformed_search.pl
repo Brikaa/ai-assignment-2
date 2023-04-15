@@ -19,7 +19,7 @@ get_successor_with_parent(State, OpenList, ClosedList, ValidState, PerformAction
 
 search(OpenList, ClosedList, Pop, _, GoalTest, _, _, Sol) :-
     call(Pop, OpenList, [Parent, State], _),
-    call(GoalTest, State), !,
+    call(GoalTest, State),
     get_solution(Parent, State, ClosedList, [], Sol).
 
 search(OpenList, ClosedList, Pop, Append, GoalTest, PerformAction, ValidState, Sol) :-
