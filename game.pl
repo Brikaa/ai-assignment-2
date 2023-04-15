@@ -110,19 +110,25 @@ get_final_state(Board, FinalState) :-
     bfs(Board, goal_test, perform_action, valid_state, Sol),
     last(Sol, FinalState).
 
+get_x_y_from_r_c(Row, Column, X, Y) :-
+    Y is Row - 1,
+    X is Column - 1.
+
 interactive() :-
-    write("Enter the number of rows"),nl,
-    read(Rows),nl,
-    write("Enter the number of columns"),nl,
-    read(Columns),nl,
-    write("Enter the X position of bomb 1 (left is 0)"),
-    read(X1),nl,
-    write("Enter the Y position of bomb 1 (top is 0)"),
-    read(Y1),nl,
-    write("Enter the X position of bomb 2 (left is 0)"),
-    read(X2),nl,
-    write("Enter the Y position of bomb 2 (top is 0)"),
-    read(Y2),nl,
+    write("Enter the number of rows"), nl,
+    read(Rows), nl,
+    write("Enter the number of columns"), nl,
+    read(Columns), nl,
+    write("Enter the row of bomb 1"), nl,
+    read(R1), nl,
+    write("Enter the column of bomb 1"), nl,
+    read(C1), nl,
+    write("Enter the row of bomb 2"), nl,
+    read(R2), nl,
+    write("Enter the column of bomb 2"), nl,
+    read(C2), nl,
+    get_x_y_from_r_c(R1, C1, X1, Y1),
+    get_x_y_from_r_c(R2, C2, X2, Y2),
     form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Board),
     findall(S, get_final_state(Board, S), L),
     write(L).
