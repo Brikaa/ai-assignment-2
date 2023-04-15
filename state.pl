@@ -1,3 +1,4 @@
+:- [uninformed_search].
 /*
 # # #
 b # b
@@ -80,7 +81,40 @@ perform_action(State, NewState) :-
 perform_action(State, NewState) :-
     place_vertical_domino(State, NewState).
 
+valid_state(_).
+
+goal_test(State) :-
+    findall(X, get_coords_of_horizontal_empty_cells(State, X, _, _), L1),
+    L1 = [],
+    findall(X, get_coords_of_vertical_empty_cells(State, X, _, _, _), L2),
+    L2 = [].
+
 % form_board(3, 4, bomb1(0, 0), bomb2(3, 2), Board), place_horizontal_domino(Board, NewBoard)
 % form_board(3, 4, bomb1(0, 0), bomb2(0, 2), Board), place_horizontal_domino(Board, NewBoard)
 % form_board(3, 4, bomb1(0, 0), bomb2(0, 2), Board), place_vertical_domino(Board, NewBoard)
 % form_board(3, 4, bomb1(0, 0), bomb2(3, 2), Board), place_vertical_domino(Board, NewBoard)
+% form_board(3, 4, bomb1(0, 0), bomb2(3, 2), Board), \+goal_test(Board)
+% form_board(2, 2, bomb1(0, 0), bomb2(0, 1), Board), place_vertical_domino(Board, NewBoard), goal_test(NewBoard)
+/*
+form_board(3, 3, bomb1(2, 0), bomb2(0, 1), Board),
+bfs(Board, goal_test, perform_action, valid_state, Steps),
+last(Steps, Sol).
+*/
+
+interactive() :-
+    write("Enter the number of rows"),nl,
+    read(Rows),nl,
+    write("Enter the number of columns"),nl,
+    read(Columns),nl,
+    write("Enter the X position of bomb 1 (starting at 0)"),
+    read(X1),nl,
+    write("Enter the Y position of bomb 1 (starting at 0)"),
+    read(Y1),nl,
+    write("Enter the X position of bomb 2 (starting at 0)"),
+    read(X2),nl,
+    write("Enter the Y position of bomb 2 (starting at 0)"),
+    read(Y2),nl,
+    form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Board),
+    bfs(Board, goal_test, perform_action, valid_state, Sol),
+    last(Sol, FinalState),
+    write(FinalState).
