@@ -41,34 +41,44 @@ form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Matrix) :-
     place_character(X1, Y1, 'b', EmptyMatrix, MatrixWithFirstBomb),
     place_character(X2, Y2, 'b', MatrixWithFirstBomb, Matrix).
 
-place_horizontal_domino(Matrix, NewMatrix) :-
-    nth0(CellY, Matrix, Row),
-    nth0(CellX, Row, Cell),
+get_coords_of_horizontal_empty_cells(Matrix, cell1(X1, Y), cell2(X2, Y), Row) :-
+    nth0(Y, Matrix, Row),
+    nth0(X1, Row, Cell),
     Cell = '#',
-    AdjascentCellX is CellX + 1,
+    X2 is X1 + 1,
     length(Row, RowLength),
-    AdjascentCellX < RowLength,
-    nth0(AdjascentCellX, Row, NewCell),
-    NewCell = '#',
-    insert_at(CellX, 'r', Row, IntermediateRow), % TODO: optimize redundant insert_at if too slow
-    insert_at(AdjascentCellX, 'l', IntermediateRow, NewRow),
-    insert_at(CellY, NewRow, Matrix, NewMatrix).
+    X2 < RowLength,
+    nth0(X2, Row, AdjascentCell),
+    AdjascentCell = '#'.
+
+get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y1), cell2(X, Y2), Row, AdjascentRow) :-
+    nth0(Y1, Matrix, Row),
+    nth0(X, Row, Cell),
+    Cell = '#',
+    Y2 is Y1 + 1,
+    length(Matrix, Height),
+    Y2 < Height,
+    nth0(Y2, Matrix, AdjascentRow),
+    nth0(X, AdjascentRow, AdjascentCell),
+    AdjascentCell = '#'.
+
+place_horizontal_domino(Matrix, NewMatrix) :-
+    get_coords_of_horizontal_empty_cells(Matrix, cell1(X1, Y), cell2(X2, Y), Row),
+    insert_at(X1, 'r', Row, IntermediateRow), % TODO: optimize redundant insert_at if too slow
+    insert_at(X2, 'l', IntermediateRow, NewRow),
+    insert_at(Y, NewRow, Matrix, NewMatrix).
 
 place_vertical_domino(Matrix, NewMatrix) :-
-    nth0(CellY, Matrix, Row),
-    nth0(CellX, Row, Cell),
-    Cell = '#',
-    AdjascentCellY is CellY + 1,
-    length(Matrix, Height),
-    AdjascentCellY < Height,
-    nth0(AdjascentCellY, Matrix, AdjascentRow),
-    nth0(CellX, AdjascentRow, AdjascentCell),
-    AdjascentCell = '#',
-    insert_at(CellX, 'u', Row, NewUpRow),
-    insert_at(CellX, 'd', AdjascentRow, NewDownRow),
-    insert_at(CellY, NewUpRow, Matrix, IntermediateMatrix),
-    insert_at(AdjascentCellY, NewDownRow, IntermediateMatrix, NewMatrix).
+    get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y1), cell2(X, Y2), Row, AdjascentRow),
+    insert_at(X, 'u', Row, NewUpRow),
+    insert_at(X, 'd', AdjascentRow, NewDownRow),
+    insert_at(Y1, NewUpRow, Matrix, IntermediateMatrix),
+    insert_at(Y2, NewDownRow, IntermediateMatrix, NewMatrix).
 
+perform_action(State, NewState) :-
+    place_horizontal_domino(State, NewState).
+perform_action(State, NewState) :-
+    place_vertical_domino(State, NewState).
 
 % form_board(3, 4, bomb1(0, 0), bomb2(3, 2), Board), place_horizontal_domino(Board, NewBoard)
 % form_board(3, 4, bomb1(0, 0), bomb2(0, 2), Board), place_horizontal_domino(Board, NewBoard)
