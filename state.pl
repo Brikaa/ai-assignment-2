@@ -106,6 +106,10 @@ bfs(Board, goal_test, perform_action, valid_state, Steps),
 last(Steps, Sol).
 */
 
+get_final_state(Board, FinalState) :-
+    bfs(Board, goal_test, perform_action, valid_state, Sol),
+    last(Sol, FinalState).
+
 interactive() :-
     write("Enter the number of rows"),nl,
     read(Rows),nl,
@@ -120,6 +124,5 @@ interactive() :-
     write("Enter the Y position of bomb 2 (starting at 0)"),
     read(Y2),nl,
     form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Board),
-    bfs(Board, goal_test, perform_action, valid_state, Sol),
-    last(Sol, FinalState),
-    write(FinalState).
+    findall(S, get_final_state(Board, S), L),
+    write(L).
