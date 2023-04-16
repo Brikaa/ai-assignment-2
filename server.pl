@@ -6,6 +6,7 @@
 
 :- http_handler(root(.), index, []).
 :- http_handler('/uninformed', uninformed, []).
+:- http_handler('/assets', my_http_reply_files, [prefix]).
 
 :- [game].
 
@@ -27,7 +28,14 @@ uninformed(Request) :-
         bomb2: _{ row: R2, column: C2 }
     }),
     get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Results),
-    reply_json_dict(_{ lol: Results }).
+    reply_json_dict(_{ results: Results }).
+
+% Serves a path in a request
+% http_reply_files seems to have a problem on Linux, so making our own
+my_http_reply_files(Request) :-
+    member(path(Path), Request),
+    atom_concat('web', Path, FilePath),
+    http_reply_file(FilePath, [], Request).
 
 start() :-
     http_server(http_dispatch, [port(2005)]).
