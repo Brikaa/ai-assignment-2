@@ -6,14 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/assets/index.js" defer></script>
-    <title>Bombs and Dominos</title>
+    <link rel="stylesheet" href="/assets/index.css">
+    <title>Bombs and Dominoes</title>
 </head>
 
 <body>
-    <!--
-        An HTML form that asks for
-        rows (number), columns (number), bomb1 row (number), bomb1 column (number), bomb2 row (number), bomb2 column (number)
-     -->
     <form>
         <label><b>Board</b></label> <br />
         <label for="rows">Rows</label> <br />
@@ -33,7 +30,8 @@
         <label for="bomb2Column">Column</label> <br />
         <input type="number" name="bomb2Column" id="bomb2Column" required> <br /> <br />
         <button type="submit">Submit</button>
-    </form>
+    </form> <br /> <br />
+    <div id="resultsContainer"></div>
 </body>
 
 </html>
