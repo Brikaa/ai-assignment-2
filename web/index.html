@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App</title>
+    <script src="/assets/index.js" defer></script>
+    <title>Bombs and Dominos</title>
 </head>
+
 <body>
-    <h1>Hello World!</h1>
+    <!--
+        An HTML form that asks for
+        rows (number), columns (number), bomb1 row (number), bomb1 column (number), bomb2 row (number), bomb2 column (number)
+     -->
+    <form>
+        <label><b>Board</b></label> <br />
+        <label for="rows">Rows</label> <br />
+        <input type="number" name="rows" id="rows" required> <br />
+        <label for="columns">Columns</label> <br />
+        <input type="number" name="columns" id="columns" required> <br /> <br />
+
+        <label><b>Bomb 1</b></label> <br />
+        <label for="bomb1Row">Row (top row is 1)</label> <br />
+        <input type="number" name="bomb1Row" id="bomb1Row" required> <br />
+        <label for="bomb1Column">Column (left column is 1)</label> <br />
+        <input type="number" name="bomb1Column" id="bomb1Column" required> <br /> <br />
+
+        <label><b>Bomb 2</b></label> <br />
+        <label for="bomb2Row">Row</label> <br />
+        <input type="number" name="bomb2Row" id="bomb2Row" required> <br />
+        <label for="bomb2Column">Column</label> <br />
+        <input type="number" name="bomb2Column" id="bomb2Column" required> <br /> <br />
+        <button type="submit">Submit</button>
+    </form>
 </body>
+
 </html>
