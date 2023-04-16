@@ -38,6 +38,7 @@
 
         const results = response.results;
         const resultsContainer = document.getElementById('resultsContainer');
+        resultsContainer.innerHTML = '';
 
         const IMAGE_WIDTH = 50;
         const IMAGE_HEIGHT = 50;
