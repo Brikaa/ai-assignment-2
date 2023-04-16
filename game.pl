@@ -114,6 +114,14 @@ get_x_y_from_r_c(Row, Column, X, Y) :-
     Y is Row - 1,
     X is Column - 1.
 
+get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Result) :-
+    get_x_y_from_r_c(R1, C1, X1, Y1),
+    get_x_y_from_r_c(R2, C2, X2, Y2),
+    form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Board),
+    findall(S, get_final_state(Board, S), Result).
+
+% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), Result) ; true.
+
 interactive() :-
     write("Enter the number of rows"), nl,
     read(Rows), nl,
@@ -127,8 +135,5 @@ interactive() :-
     read(R2), nl,
     write("Enter the column of bomb 2"), nl,
     read(C2), nl,
-    get_x_y_from_r_c(R1, C1, X1, Y1),
-    get_x_y_from_r_c(R2, C2, X2, Y2),
-    form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Board),
-    findall(S, get_final_state(Board, S), L),
-    write(L).
+    get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Result),
+    write(Result).
