@@ -10,7 +10,6 @@
 
 :- [game].
 
-
 index(Request) :-
     http_reply_file('web/index.html', [], Request).
 
@@ -37,10 +36,8 @@ my_http_reply_files(Request) :-
     atom_concat('web', Path, FilePath),
     http_reply_file(FilePath, [], Request).
 
-start() :-
+serve() :-
     http_server(http_dispatch, [port(2005)]).
 
 stop() :-
     http_stop_server(2005, []).
-
-:- start().
