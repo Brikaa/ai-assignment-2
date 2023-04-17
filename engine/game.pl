@@ -108,19 +108,9 @@ goal_test(State) :-
 % form_board(3, 4, bomb1(0, 0), bomb2(3, 2), Board), place_vertical_domino(Board, NewBoard)
 % form_board(3, 4, bomb1(0, 0), bomb2(3, 2), Board), \+goal_test(Board)
 % form_board(2, 2, bomb1(0, 0), bomb2(0, 1), Board), place_vertical_domino(Board, NewBoard), goal_test(NewBoard)
-/*
-form_board(3, 3, bomb1(2, 0), bomb2(0, 1), Board),
-bfs(Board, goal_test, perform_action, valid_state, Steps),
-last(Steps, Sol).
-*/
-/*
-form_board(2, 4, bomb1(1, 1), bomb2(2, 1), Board),
-bfs(Board, goal_test, perform_action, valid_state, Steps),
-last(Steps, Sol).
-*/
 
 get_final_state(Board, FinalState) :-
-    bfs(Board, goal_test, perform_action, valid_state, Sol),
+    bfs(Board, _{goal: goal_test, action: perform_action, valid: valid_state}, Sol),
     last(Sol, FinalState).
 
 get_x_y_from_r_c(Row, Column, X, Y) :-
