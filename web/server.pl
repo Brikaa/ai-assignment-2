@@ -31,7 +31,7 @@ handle_uninformed(Request) :-
     reply_json_dict(_{ results: Results }).
 
 handle_uninformed(_) :-
-    reply_json_dict(_{ results: [] }).
+    reply_json_dict(_{ error: "Invalid inputs" }, [status(400)]).
 
 serve_front_assets(Request) :-
     member(path(Path), Request),

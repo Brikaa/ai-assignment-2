@@ -10,6 +10,10 @@
     const form = document.getElementsByTagName('form')[0];
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const resultsContainer = document.getElementById('resultsContainer');
+        resultsContainer.innerHTML = '';
+
         const formData = Object.fromEntries(new FormData(form));
         const requestBody = {
             rows: parseInt(formData.rows),
@@ -32,18 +36,14 @@
             headers,
             body: raw
         };
-        const response = await (
-            await fetch('http://localhost:2005/uninformed', requestOptions)
-        ).json();
 
-        const results = response.results;
-        const resultsContainer = document.getElementById('resultsContainer');
-        resultsContainer.innerHTML = '';
-
-        if (results.length === 0) {
-            alert("Invalid inputs");
+        const response = await fetch('http://localhost:2005/uninformed', requestOptions);
+        const responseBody = await response.json();
+        if (response.status >= 400) {
+            alert(responseBody.error);
             return;
         }
+        const results = responseBody.results;
 
         const IMAGE_WIDTH = 50;
         const IMAGE_HEIGHT = 50;
@@ -60,13 +60,21 @@
                     if (cell === 'u') {
                         tableCell.setAttribute('rowspan', 2);
                         tableCell.appendChild(
-                            createImage('/assets/domino-vertical.svg', IMAGE_WIDTH, IMAGE_HEIGHT * 2)
+                            createImage(
+                                '/assets/domino-vertical.svg',
+                                IMAGE_WIDTH,
+                                IMAGE_HEIGHT * 2
+                            )
                         );
                     }
                     if (cell === 'l') {
                         tableCell.setAttribute('colspan', 2);
                         tableCell.appendChild(
-                            createImage('/assets/domino-horizontal.svg', IMAGE_WIDTH * 2, IMAGE_HEIGHT)
+                            createImage(
+                                '/assets/domino-horizontal.svg',
+                                IMAGE_WIDTH * 2,
+                                IMAGE_HEIGHT
+                            )
                         );
                     }
                     if (cell === 'b') {
