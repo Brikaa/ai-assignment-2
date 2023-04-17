@@ -8,12 +8,10 @@
 :- http_handler('/uninformed', handle_uninformed, []).
 :- http_handler('/assets', serve_front_assets, [prefix]).
 
-:- working_directory(_, 'web').
-
-:- ['../engine/game'].
+:- ['engine/game'].
 
 index(Request) :-
-    http_reply_file('front/index.html', [], Request).
+    http_reply_file('web/front/index.html', [], Request).
 
 handle_uninformed(Request) :-
     /*
@@ -33,7 +31,7 @@ handle_uninformed(Request) :-
 
 serve_front_assets(Request) :-
     member(path(Path), Request),
-    atom_concat('front', Path, FilePath),
+    atom_concat('web/front', Path, FilePath),
     exists_file(FilePath),
     !,
     http_reply_file(FilePath, [], Request).
