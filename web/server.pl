@@ -27,7 +27,11 @@ handle_uninformed(Request) :-
         bomb2: _{ row: R2, column: C2 }
     }),
     get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Results),
+    !,
     reply_json_dict(_{ results: Results }).
+
+handle_uninformed(_) :-
+    reply_json_dict(_{ results: [] }).
 
 serve_front_assets(Request) :-
     member(path(Path), Request),

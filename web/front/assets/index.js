@@ -40,6 +40,11 @@
         const resultsContainer = document.getElementById('resultsContainer');
         resultsContainer.innerHTML = '';
 
+        if (results.length === 0) {
+            alert("Invalid inputs");
+            return;
+        }
+
         const IMAGE_WIDTH = 50;
         const IMAGE_HEIGHT = 50;
 
