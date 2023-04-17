@@ -78,8 +78,7 @@
                 });
             });
 
-            resultsContainer.appendChild(document.createElement('br'));
-            resultsContainer.appendChild(document.createElement('br'));
+            resultsContainer.appendChild(document.createElement('hr'));
         });
     });
 })();
