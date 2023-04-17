@@ -26,9 +26,17 @@ replicate(Char, Number, [Char | List]) :-
     Number1 is Number - 1,
     replicate(Char, Number1, List).
 
+get_empty_cell(Cell) :- Cell = '#'.
+get_right_domino_part(D) :- D = r.
+get_left_domino_part(D) :- D = l.
+get_top_domino_part(D) :- D = u.
+get_bottom_domino_part(D) :- D = d.
+get_bomb(B) :- B = b.
+
 form_matrix(0, _, []) :- !.
 form_matrix(R, C, [X | Xs]) :-
-    replicate('#', C, X),
+    get_empty_cell(EmptyCell),
+    replicate(EmptyCell, C, X),
     R1 is R - 1,
     form_matrix(R1, C, Xs).
 
@@ -39,40 +47,45 @@ place_character(X, Y, Character, InitialMatrix, FinalMatrix) :-
 
 form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Matrix) :-
     form_matrix(Rows, Columns, EmptyMatrix),
-    place_character(X1, Y1, 'b', EmptyMatrix, MatrixWithFirstBomb),
-    place_character(X2, Y2, 'b', MatrixWithFirstBomb, Matrix).
+    get_bomb(B),
+    place_character(X1, Y1, B, EmptyMatrix, MatrixWithFirstBomb),
+    place_character(X2, Y2, B, MatrixWithFirstBomb, Matrix).
 
 get_coords_of_horizontal_empty_cells(Matrix, cell1(X1, Y), cell2(X2, Y), Row) :-
     nth0(Y, Matrix, Row),
     nth0(X1, Row, Cell),
-    Cell = '#',
+    get_empty_cell(Cell),
     X2 is X1 + 1,
     length(Row, RowLength),
     X2 < RowLength,
     nth0(X2, Row, AdjascentCell),
-    AdjascentCell = '#'.
+    get_empty_cell(AdjascentCell).
 
 get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y1), cell2(X, Y2), Row, AdjascentRow) :-
     nth0(Y1, Matrix, Row),
     nth0(X, Row, Cell),
-    Cell = '#',
+    get_empty_cell(Cell),
     Y2 is Y1 + 1,
     length(Matrix, Height),
     Y2 < Height,
     nth0(Y2, Matrix, AdjascentRow),
     nth0(X, AdjascentRow, AdjascentCell),
-    AdjascentCell = '#'.
+    get_empty_cell(AdjascentCell).
 
 place_horizontal_domino(Matrix, NewMatrix) :-
     get_coords_of_horizontal_empty_cells(Matrix, cell1(X1, Y), cell2(X2, Y), Row),
-    insert_at(X1, 'r', Row, IntermediateRow), % TODO: optimize redundant insert_at if too slow
-    insert_at(X2, 'l', IntermediateRow, NewRow),
+    get_right_domino_part(Rd),
+    get_left_domino_part(Ld),
+    insert_at(X1, Rd, Row, IntermediateRow), % TODO: optimize redundant insert_at if too slow
+    insert_at(X2, Ld, IntermediateRow, NewRow),
     insert_at(Y, NewRow, Matrix, NewMatrix).
 
 place_vertical_domino(Matrix, NewMatrix) :-
     get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y1), cell2(X, Y2), Row, AdjascentRow),
-    insert_at(X, 'u', Row, NewUpRow),
-    insert_at(X, 'd', AdjascentRow, NewDownRow),
+    get_top_domino_part(Td),
+    get_bottom_domino_part(Bd),
+    insert_at(X, Td, Row, NewUpRow),
+    insert_at(X, Bd, AdjascentRow, NewDownRow),
     insert_at(Y1, NewUpRow, Matrix, IntermediateMatrix),
     insert_at(Y2, NewDownRow, IntermediateMatrix, NewMatrix).
 
