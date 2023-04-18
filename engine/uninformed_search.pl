@@ -32,10 +32,11 @@ valid_successor(State, Lists, StateUtil, Successor) :-
     \+(State = Successor),
     ValidState = StateUtil.valid,
     call(ValidState, Successor),
-    \+member([Successor, _], Lists.open),
-    \+member([Successor, _], Lists.closed).
+    ExistingNode = [Successor | _],
+    \+member(ExistingNode, Lists.open),
+    \+member(ExistingNode, Lists.closed).
 
-get_successor_with_parent(State, Lists, StateUtil, [Successor, State]) :-
+get_successor_node(State, Lists, StateUtil, [Successor, State]) :-
     PerformAction = StateUtil.action,
     call(PerformAction, State, Successor),
     valid_successor(State, Lists, StateUtil, Successor).
@@ -49,17 +50,20 @@ search(Lists, AlgoUtil, StateUtil, Sol) :-
 
 search(Lists, AlgoUtil, StateUtil, Sol) :-
     Pop = AlgoUtil.pop,
-    call(Pop, Lists.open, [State, Parent], PoppedOpenList),
-    findall(X, get_successor_with_parent(State, Lists, StateUtil, X), Successors),
+    call(Pop, Lists.open, Node, PoppedOpenList),
+    [State | _] = Node,
+    findall(X, get_successor_node(State, Lists, StateUtil, X), Successors),
     Append = AlgoUtil.append,
     call(Append, PoppedOpenList, Successors, NewOpenList),
-    NewLists = Lists.put(_{open: NewOpenList, closed: [[State, Parent] | Lists.closed]}),
+    NewClosedList = [Node | Lists.closed],
+    NewLists = Lists.put(_{open: NewOpenList, closed: NewClosedList}),
     search(NewLists, AlgoUtil, StateUtil, Sol).
 
 bfs_append(Xs, Ys, Zs) :- append(Xs, Ys, Zs).
 bfs_pop([X | Xs], X, Xs).
 
 bfs(InitialState, StateUtil, Sol) :-
-    Lists = _{open: [[InitialState, 'null']], closed: []},
+    InitialNode = [InitialState, []],
+    Lists = _{open: [InitialNode], closed: []},
     AlgoUtil = _{pop: bfs_pop, append: bfs_append},
     search(Lists, AlgoUtil, StateUtil, Sol).
