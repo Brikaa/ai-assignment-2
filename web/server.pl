@@ -43,12 +43,12 @@ serve_front_assets(Request) :-
 serve_front_assets(Request) :-
     http_404([], Request).
 
-get_port(Port) :- Port = 2005.
+port(2005).
 
 serve() :-
-    get_port(Port),
+    port(Port),
     http_server(http_dispatch, [port(Port)]).
 
 stop() :-
-    get_port(Port),
+    port(Port),
     http_stop_server(Port, []).
