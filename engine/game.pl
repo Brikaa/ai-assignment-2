@@ -1,4 +1,4 @@
-:- [uninformed_search].
+:- [search].
 /*
 # # #
 b # b
@@ -58,19 +58,19 @@ get_coords_of_horizontal_empty_cells(Matrix, cell1(X1, Y), cell2(X2, Y), Row) :-
     X2 is X1 + 1,
     length(Row, RowLength),
     X2 < RowLength,
-    nth0(X2, Row, AdjascentCell),
-    empty_cell(AdjascentCell).
+    nth0(X2, Row, AdjacentCell),
+    empty_cell(AdjacentCell).
 
-get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y1), cell2(X, Y2), Row, AdjascentRow) :-
+get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y1), cell2(X, Y2), Row, AdjacentRow) :-
     nth0(Y1, Matrix, Row),
     nth0(X, Row, Cell),
     empty_cell(Cell),
     Y2 is Y1 + 1,
     length(Matrix, Height),
     Y2 < Height,
-    nth0(Y2, Matrix, AdjascentRow),
-    nth0(X, AdjascentRow, AdjascentCell),
-    empty_cell(AdjascentCell).
+    nth0(Y2, Matrix, AdjacentRow),
+    nth0(X, AdjacentRow, AdjacentCell),
+    empty_cell(AdjacentCell).
 
 place_horizontal_domino(Matrix, NewMatrix) :-
     get_coords_of_horizontal_empty_cells(Matrix, cell1(X1, Y), cell2(X2, Y), Row),
@@ -81,17 +81,26 @@ place_horizontal_domino(Matrix, NewMatrix) :-
     insert_at(Y, NewRow, Matrix, NewMatrix).
 
 place_vertical_domino(Matrix, NewMatrix) :-
-    get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y1), cell2(X, Y2), Row, AdjascentRow),
+    get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y1), cell2(X, Y2), Row, AdjacentRow),
     top_domino_part(Td),
     bottom_domino_part(Bd),
     insert_at(X, Td, Row, NewUpRow),
-    insert_at(X, Bd, AdjascentRow, NewDownRow),
+    insert_at(X, Bd, AdjacentRow, NewDownRow),
     insert_at(Y1, NewUpRow, Matrix, IntermediateMatrix),
     insert_at(Y2, NewDownRow, IntermediateMatrix, NewMatrix).
 
-perform_action(State, NewState) :-
+adjacent_cells_heuristic(State, H) :-
+    findall(X, get_coords_of_horizontal_empty_cells(State, X, _, _), Hs),
+    length(Hs, Nh),
+    findall(X, get_coords_of_vertical_empty_cells(State, X, _, _), Vs),
+    length(Vs, Nv),
+    H is -(Nh + Nv).
+
+zero_heuristic(_, 0).
+
+perform_action(State, NewState, (-1)) :-
     place_horizontal_domino(State, NewState).
-perform_action(State, NewState) :-
+perform_action(State, NewState, (-1)) :-
     place_vertical_domino(State, NewState).
 
 valid_state(_).
@@ -110,7 +119,7 @@ goal_test(State) :-
 % form_board(2, 2, bomb1(0, 0), bomb2(0, 1), Board), place_vertical_domino(Board, NewBoard), goal_test(NewBoard)
 
 get_final_state(Board, FinalState) :-
-    bfs(Board, _{goal: goal_test, action: perform_action, valid: valid_state}, Sol),
+    bfs(Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: zero_heuristic}, Sol),
     last(Sol, FinalState).
 
 get_x_y_from_r_c(Row, Column, X, Y) :-
