@@ -37,7 +37,7 @@
             body: raw
         };
 
-        const response = await fetch('http://localhost:2005/uninformed', requestOptions);
+        const response = await fetch('http://localhost:2005/bfs', requestOptions);
         const responseBody = await response.json();
         if (response.status >= 400) {
             alert(responseBody.error);

@@ -5,7 +5,7 @@
 :- use_module(library(http/http_error)).
 
 :- http_handler(root(.), index, []).
-:- http_handler('/uninformed', handle_uninformed, []).
+:- http_handler('/bfs', handle_bfs, []).
 :- http_handler('/assets', serve_front_assets, [prefix]).
 
 :- ['engine/game'].
@@ -13,7 +13,7 @@
 index(Request) :-
     http_reply_file('web/front/index.html', [], Request).
 
-handle_uninformed(Request) :-
+handle_bfs(Request) :-
     /*
     rows: number,
     columns: number,
@@ -30,7 +30,7 @@ handle_uninformed(Request) :-
     !,
     reply_json_dict(_{ results: Results }).
 
-handle_uninformed(_) :-
+handle_bfs(_) :-
     reply_json_dict(_{ error: "Invalid inputs" }, [status(400)]).
 
 serve_front_assets(Request) :-
