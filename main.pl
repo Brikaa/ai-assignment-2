@@ -1,6 +1,6 @@
-check_main() :-
+check_main(_) :-
     source_file('main.pl'), !.
-check_main() :-
+check_main(_) :-
     write(
         "The current working directory is not the root directory of the project, please switch to the root directory"
     ), nl,
@@ -8,7 +8,7 @@ check_main() :-
     sleep(5),
     halt.
 
-:- check_main().
+:- check_main(_).
 
 :- ['web/server'].
 
