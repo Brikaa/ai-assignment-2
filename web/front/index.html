@@ -14,21 +14,21 @@
     <form>
         <label><b>Board</b></label> <br />
         <label for="rows">Rows</label> <br />
-        <input type="number" name="rows" id="rows" required> <br />
+        <input type="number" name="rows" id="rows" required min="1"> <br />
         <label for="columns">Columns</label> <br />
-        <input type="number" name="columns" id="columns" required> <br /> <br />
+        <input type="number" name="columns" id="columns" required min="1"> <br /> <br />
 
         <label><b>Bomb 1</b></label> <br />
         <label for="bomb1Row">Row (top row is 1)</label> <br />
-        <input type="number" name="bomb1Row" id="bomb1Row" required> <br />
+        <input type="number" name="bomb1Row" id="bomb1Row" required min="1"> <br />
         <label for="bomb1Column">Column (left column is 1)</label> <br />
-        <input type="number" name="bomb1Column" id="bomb1Column" required> <br /> <br />
+        <input type="number" name="bomb1Column" id="bomb1Column" required min="1"> <br /> <br />
 
         <label><b>Bomb 2</b></label> <br />
         <label for="bomb2Row">Row</label> <br />
-        <input type="number" name="bomb2Row" id="bomb2Row" required> <br />
+        <input type="number" name="bomb2Row" id="bomb2Row" required min="1"> <br />
         <label for="bomb2Column">Column</label> <br />
-        <input type="number" name="bomb2Column" id="bomb2Column" required> <br /> <br />
+        <input type="number" name="bomb2Column" id="bomb2Column" required min="1"> <br /> <br />
         <button type="submit">Submit</button>
     </form> <br />
     <div id="resultsContainer"></div>

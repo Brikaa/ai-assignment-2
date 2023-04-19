@@ -134,27 +134,45 @@ a_star(Board, Sol) :-
         Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: adjacent_cells_heuristic}, Sol
     ).
 
-get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, Result) :-
+get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, Results) :-
     get_x_y_from_r_c(R1, C1, X1, Y1),
     get_x_y_from_r_c(R2, C2, X2, Y2),
     form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Board),
-    findall(S, get_final_state(Board, Algorithm, S), Result).
+    findall(S, get_final_state(Board, Algorithm, S), Results).
 
-% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), bfs, Result) ; true.
-% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, Result) ; true.
+% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), bfs, Results) ; true.
+% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, Results) ; true.
 
-interactive() :-
-    write("Enter the number of rows"), nl,
-    read(Rows), nl,
-    write("Enter the number of columns"), nl,
-    read(Columns), nl,
-    write("Enter the row of bomb 1"), nl,
-    read(R1), nl,
-    write("Enter the column of bomb 1"), nl,
-    read(C1), nl,
-    write("Enter the row of bomb 2"), nl,
-    read(R2), nl,
-    write("Enter the column of bomb 2"), nl,
-    read(C2), nl,
-    get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Result),
-    write(Result).
+count(X, [X | Xs], Acc, Count) :-
+    !,
+    NewAcc is Acc + 1,
+    count(X, Xs, NewAcc, Count).
+
+count(X, [_ | Xs], Acc, Count) :-
+    !,
+    count(X, Xs, Acc, Count).
+
+count(_, [], Acc, Acc).
+
+count_dominos([Row | Rows], Acc, Count) :-
+    !,
+    left_domino_part(Ld),
+    top_domino_part(Td),
+    count(Ld, Row, 0, Nld),
+    count(Td, Row, 0, Ntd),
+    NewAcc is Nld + Ntd + Acc,
+    count_dominos(Rows, NewAcc, Count).
+
+count_dominos([], Acc, Acc).
+
+bfs_getter(Xs, X) :- last(Xs, X).
+a_star_getter([X | _], X).
+
+get_max_dominos_from_results(Results, MaxStateGetter, MaxDominos) :-
+    call(MaxStateGetter, Results, State),
+    count_dominos(State, 0, MaxDominos).
+
+/*
+get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, Results),
+get_max_dominos_from_results(Results, a_star_getter, N).
+*/
