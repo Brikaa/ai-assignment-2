@@ -14,7 +14,7 @@
 index(Request) :-
     http_reply_file('web/front/index.html', [], Request).
 
-response(Results, MaxDominos, _{ results: Results, max_dominos: MaxDominos }).
+response(Results, MaxDominos, _{ results: Results, maxDominos: MaxDominos }).
 
 handle_game_request(Algorithm, MaxStateGetter, Request) :-
     /*

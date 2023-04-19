@@ -27,6 +27,7 @@
                 column: parseInt(formData.bomb2Column)
             }
         };
+        const endpoint = formData.algorithm;
 
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
@@ -37,16 +38,19 @@
             body: raw
         };
 
-        const response = await fetch('http://localhost:2005/bfs', requestOptions);
+        const response = await fetch(`http://localhost:2005/${endpoint}`, requestOptions);
         const responseBody = await response.json();
         if (response.status >= 400) {
             alert(responseBody.error);
             return;
         }
-        const results = responseBody.results;
-
+        const { maxDominos, results } = responseBody;
         const IMAGE_WIDTH = 50;
         const IMAGE_HEIGHT = 50;
+
+        document.getElementById(
+            'maxDominos'
+        ).innerText = `The maximum number of dominos that can be placed is ${maxDominos}`;
 
         results.forEach((result) => {
             const table = document.createElement('table');

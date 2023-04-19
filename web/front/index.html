@@ -12,6 +12,12 @@
 
 <body>
     <form>
+        <label for="algorithm"><b>Algorithm</b></label> <br />
+        <select name="algorithm" id="algorithm">
+            <option value="a_star">A*</option>
+            <option value="bfs">BFS</option>
+        </select> <br /> <br />
+
         <label><b>Board</b></label> <br />
         <label for="rows">Rows</label> <br />
         <input type="number" name="rows" id="rows" required min="1"> <br />
@@ -31,6 +37,7 @@
         <input type="number" name="bomb2Column" id="bomb2Column" required min="1"> <br /> <br />
         <button type="submit">Submit</button>
     </form> <br />
+    <p id="maxDominos"></p>
     <div id="resultsContainer"></div>
 </body>
 
