@@ -26,7 +26,7 @@ handle_uninformed(Request) :-
         bomb1: _{ row: R1, column: C1 },
         bomb2: _{ row: R2, column: C2 }
     }),
-    get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Results),
+    get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), bfs, Results),
     !,
     reply_json_dict(_{ results: Results }).
 

@@ -92,7 +92,7 @@ place_vertical_domino(Matrix, NewMatrix) :-
 adjacent_cells_heuristic(State, H) :-
     findall(X, get_coords_of_horizontal_empty_cells(State, X, _, _), Hs),
     length(Hs, Nh),
-    findall(X, get_coords_of_vertical_empty_cells(State, X, _, _), Vs),
+    findall(X, get_coords_of_vertical_empty_cells(State, X, _, _, _), Vs),
     length(Vs, Nv),
     H is -(Nh + Nv).
 
@@ -118,21 +118,30 @@ goal_test(State) :-
 % form_board(3, 4, bomb1(0, 0), bomb2(3, 2), Board), \+goal_test(Board)
 % form_board(2, 2, bomb1(0, 0), bomb2(0, 1), Board), place_vertical_domino(Board, NewBoard), goal_test(NewBoard)
 
-get_final_state(Board, FinalState) :-
-    bfs(Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: zero_heuristic}, Sol),
+get_final_state(Board, Algorithm, FinalState) :-
+    call(Algorithm, Board, Sol),
     last(Sol, FinalState).
 
 get_x_y_from_r_c(Row, Column, X, Y) :-
     Y is Row - 1,
     X is Column - 1.
 
-get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Result) :-
+bfs(Board, Sol) :-
+    bfs(Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: zero_heuristic}, Sol).
+
+a_star(Board, Sol) :-
+    a_star(
+        Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: adjacent_cells_heuristic}, Sol
+    ).
+
+get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, Result) :-
     get_x_y_from_r_c(R1, C1, X1, Y1),
     get_x_y_from_r_c(R2, C2, X2, Y2),
     form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Board),
-    findall(S, get_final_state(Board, S), Result).
+    findall(S, get_final_state(Board, Algorithm, S), Result).
 
-% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), Result) ; true.
+% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), bfs, Result) ; true.
+% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, Result) ; true.
 
 interactive() :-
     write("Enter the number of rows"), nl,
