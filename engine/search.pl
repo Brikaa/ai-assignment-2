@@ -33,8 +33,7 @@ get_solution(State, GoalState, Lists, Acc, Sol) :-
 get_solution(_, GoalState, _, Acc, Sol) :-
     append(Acc, [GoalState], Sol).
 
-valid_successor(ParentNode, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
-    [ParentState | _] = ParentNode,
+valid_successor_node(ParentState, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
     [SuccessorState | _] = SuccessorNode,
     \+(ParentState = SuccessorState),
     ValidState = StateUtil.valid,
@@ -57,7 +56,7 @@ get_successor_node(ParentNode, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
     SuccessorG is Cost + G,
     call(CalculateHeuristic, SuccessorState, SuccessorH),
     SuccessorF is SuccessorG + SuccessorH,
-    valid_successor(ParentNode, Lists, AlgoUtil, StateUtil, SuccessorNode).
+    valid_successor_node(ParentState, Lists, AlgoUtil, StateUtil, SuccessorNode).
 
 search(Lists, AlgoUtil, StateUtil, Sol) :-
     Pop = AlgoUtil.pop,
