@@ -89,12 +89,17 @@ place_vertical_domino(Matrix, NewMatrix) :-
     insert_at(Y1, NewUpRow, Matrix, IntermediateMatrix),
     insert_at(Y2, NewDownRow, IntermediateMatrix, NewMatrix).
 
-adjacent_cells_heuristic(State, H) :-
-    findall(X, get_coords_of_horizontal_empty_cells(State, X, _, _), Hs),
-    length(Hs, Nh),
-    findall(X, get_coords_of_vertical_empty_cells(State, X, _, _, _), Vs),
-    length(Vs, Nv),
-    H is -(Nh + Nv).
+insertable_square(Matrix, X, Y) :-
+    get_coords_of_horizontal_empty_cells(Matrix, cell1(X, Y), _, _),
+    !.
+
+insertable_square(Matrix, X, Y) :-
+    get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y), _, _, _).
+
+insertable_squares_heuristic(State, H) :-
+    findall(X, insertable_square(State, X, _), L),
+    length(L, Ph),
+    H is -(Ph).
 
 zero_heuristic(_, 0).
 
@@ -131,7 +136,7 @@ bfs(Board, Sol) :-
 
 a_star(Board, Sol) :-
     a_star(
-        Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: adjacent_cells_heuristic}, Sol
+        Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: insertable_squares_heuristic}, Sol
     ).
 
 get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, Results) :-
@@ -175,4 +180,12 @@ get_max_dominos_from_results(Results, MaxStateGetter, MaxDominos) :-
 /*
 get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, Results),
 get_max_dominos_from_results(Results, a_star_getter, N).
+*/
+
+/*
+form_board(3, 5, bomb1(1, 1), bomb2(2, 1), Board),
+a_star(Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: insertable_squares_heuristic}, Sol)
+
+form_board(3, 5, bomb1(1, 1), bomb2(2, 1), Board),
+bfs(Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: zero_heuristic}, Sol)
 */
