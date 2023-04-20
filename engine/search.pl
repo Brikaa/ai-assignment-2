@@ -16,7 +16,7 @@ A*
 - Repeat
 
 Lists = {open: list, closed: list}
-AlgoUtil = {pop: fn, append: fn, compare_node_costs: fn(Delta, X, Y), filter_open_list: fn(OpenList, Successors, NewOp)}
+AlgoUtil = {pop: fn, append: fn, compare_node_costs: fn(Delta, X, Y)}
 StateUtil = {goal: fn, action: fn, valid: fn, heuristic: fn}
 search(Lists, AlgoUtil, StateUtil, Sol)
 Node = [State, Parent, g, h, f]
@@ -33,29 +33,31 @@ get_solution(State, GoalState, Lists, Acc, Sol) :-
 get_solution(_, GoalState, _, Acc, Sol) :-
     append(Acc, [GoalState], Sol).
 
-valid_successor(Node, Lists, AlgoUtil, StateUtil, Successor) :-
-    [State | _] = Node,
-    \+(State = Successor),
+valid_successor(ParentNode, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
+    [ParentState | _] = ParentNode,
+    [SuccessorState | _] = SuccessorNode,
+    \+(ParentState = SuccessorState),
     ValidState = StateUtil.valid,
-    call(ValidState, Successor),
-    ExistingNode = [Successor | _],
+    call(ValidState, SuccessorState),
+    ExistingNode = [SuccessorState | _],
     ComparePrices = AlgoUtil.compare_node_costs,
     \+((
         member(ExistingNode, Lists.open),
-        call(ComparePrices, Delta, ExistingNode, Node),
+        call(ComparePrices, Delta, ExistingNode, SuccessorNode),
         Delta = <
     )),
     \+member(ExistingNode, Lists.closed).
 
-get_successor_node(Node, Lists, AlgoUtil, StateUtil, [Successor, State, SuccessorG, SuccessorH, SuccessorF]) :-
-    [State, _Parent, G | _] = Node,
+get_successor_node(ParentNode, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
+    [ParentState, _Parent, G | _] = ParentNode,
+    SuccessorNode = [SuccessorState, ParentState, SuccessorG, SuccessorH, SuccessorF],
     PerformAction = StateUtil.action,
     CalculateHeuristic = StateUtil.heuristic,
-    call(PerformAction, State, Successor, Cost),
+    call(PerformAction, ParentState, SuccessorState, Cost),
     SuccessorG is Cost + G,
-    call(CalculateHeuristic, Successor, SuccessorH),
+    call(CalculateHeuristic, SuccessorState, SuccessorH),
     SuccessorF is SuccessorG + SuccessorH,
-    valid_successor(Node, Lists, AlgoUtil, StateUtil, Successor).
+    valid_successor(ParentNode, Lists, AlgoUtil, StateUtil, SuccessorNode).
 
 search(Lists, AlgoUtil, StateUtil, Sol) :-
     Pop = AlgoUtil.pop,
@@ -68,10 +70,8 @@ search(Lists, AlgoUtil, StateUtil, Sol) :-
     Pop = AlgoUtil.pop,
     call(Pop, Lists.open, Node, PoppedOpenList),
     findall(X, get_successor_node(Node, Lists, AlgoUtil, StateUtil, X), Successors),
-    FilterOpenList = AlgoUtil.filter_open_list,
-    call(FilterOpenList, PoppedOpenList, Successors, FilteredOpenList),
     Append = AlgoUtil.append,
-    call(Append, FilteredOpenList, Successors, NewOpenList),
+    call(Append, PoppedOpenList, Successors, NewOpenList),
     NewClosedList = [Node | Lists.closed],
     NewLists = Lists.put(_{open: NewOpenList, closed: NewClosedList}),
     search(NewLists, AlgoUtil, StateUtil, Sol).
@@ -90,19 +90,6 @@ a_star_compare_node_costs('>', [_, _, _, _, F1], [_, _, _, _, F2]) :- F1 > F2.
 a_star_compare_node_costs('<', [_, _, _, _, F1], [_, _, _, _, F2]) :- F1 < F2.
 a_star_compare_node_costs('<', [_, _, _, _, F1], [_, _, _, _, F2]) :- F1 = F2.
 
-noop_filter(Xs, _, Xs).
-
-filter_duplicates([[State, _, _, _, _] | Xs], Ys, Zs) :-
-    member([State, _, _, _, _], Ys),
-    !,
-    filter_duplicates(Xs, Ys, Zs).
-
-filter_duplicates([X | Xs], Ys, [X | Zs]) :-
-    !,
-    filter_duplicates(Xs, Ys, Zs).
-
-filter_duplicates([], _, []).
-
 % --------------------- Specific search algorithms ---------------------
 
 bfs(InitialState, StateUtil, Sol) :-
@@ -111,8 +98,7 @@ bfs(InitialState, StateUtil, Sol) :-
     AlgoUtil = _{
         pop: pop_first,
         append: append_last,
-        compare_node_costs: always_cheaper_node,
-        filter_open_list: noop_filter
+        compare_node_costs: always_cheaper_node
     },
     search(Lists, AlgoUtil, StateUtil, Sol).
 
@@ -122,7 +108,6 @@ a_star(InitialState, StateUtil, Sol) :-
     AlgoUtil = _{
         pop: pop_first,
         append: append_in_order(a_star_compare_node_costs),
-        compare_node_costs: a_star_compare_node_costs,
-        filter_open_list: filter_duplicates
+        compare_node_costs: a_star_compare_node_costs
     },
     search(Lists, AlgoUtil, StateUtil, Sol).
