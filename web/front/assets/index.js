@@ -27,7 +27,8 @@
                 column: parseInt(formData.bomb2Column)
             }
         };
-        const endpoint = formData.algorithm;
+        const algorithm = formData.algorithm;
+        const resultType = formData.resultType;
 
         const headers = new Headers();
         headers.append('Content-Type', 'application/json');
@@ -38,7 +39,7 @@
             body: raw
         };
 
-        const response = await fetch(`http://localhost:2005/${endpoint}`, requestOptions);
+        const response = await fetch(`http://localhost:2005/${algorithm}/${resultType}`, requestOptions);
         const responseBody = await response.json();
         if (response.status >= 400) {
             alert(responseBody.error);

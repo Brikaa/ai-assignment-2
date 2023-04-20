@@ -12,11 +12,15 @@
 
 <body>
     <form>
-        <label for="algorithm"><b>Algorithm</b></label> <br />
+        <label><b>Search</b></label> <br />
         <select name="algorithm" id="algorithm">
-            <option value="a_star">A*</option>
             <option value="bfs">BFS</option>
-        </select> <br /> <br />
+            <option value="a_star">A*</option>
+        </select>
+        <select name="resultType" id="resultType">
+            <option value="all">All results</option>
+            <option value="optimal">Optimal result</option>
+        </select><br /> <br />
 
         <label><b>Board</b></label> <br />
         <label for="rows">Rows</label> <br />

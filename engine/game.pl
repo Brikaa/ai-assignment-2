@@ -139,14 +139,26 @@ a_star(Board, Sol) :-
         Board, _{goal: goal_test, action: perform_action, valid: valid_state, heuristic: insertable_squares_heuristic}, Sol
     ).
 
-get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, Results) :-
+all_results_getter(Board, Algorithm, Results) :-
+    findall(S, get_final_state(Board, Algorithm, S), Results).
+
+bfs_optimal_result_getter(Board, Algorithm, Results) :-
+    findall(S, get_final_state(Board, Algorithm, S), AllResults),
+    last(AllResults, OptimalResult),
+    Results = [OptimalResult].
+
+a_star_optimal_result_getter(Board, Algorithm, Results) :-
+    get_final_state(Board, Algorithm, FinalState),
+    Results = [FinalState].
+
+get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, ResultsGetter, Results) :-
     get_x_y_from_r_c(R1, C1, X1, Y1),
     get_x_y_from_r_c(R2, C2, X2, Y2),
     form_board(Rows, Columns, bomb1(X1, Y1), bomb2(X2, Y2), Board),
-    findall(S, get_final_state(Board, Algorithm, S), Results).
+    call(ResultsGetter, Board, Algorithm, Results).
 
-% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), bfs, Results) ; true.
-% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, Results) ; true.
+% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), bfs, all_results_getter, Results) ; true.
+% get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, all_results_getter, Results) ; true.
 
 count(X, [X | Xs], Acc, Count) :-
     !,
@@ -170,8 +182,8 @@ count_dominos([Row | Rows], Acc, Count) :-
 
 count_dominos([], Acc, Acc).
 
-bfs_getter(Xs, X) :- last(Xs, X).
-a_star_getter([X | _], X).
+bfs_max_dominos_getter(Xs, X) :- last(Xs, X).
+a_star_max_dominos_getter([X | _], X).
 
 get_max_dominos_from_results(Results, MaxStateGetter, MaxDominos) :-
     call(MaxStateGetter, Results, State),
@@ -179,7 +191,7 @@ get_max_dominos_from_results(Results, MaxStateGetter, MaxDominos) :-
 
 /*
 get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, Results),
-get_max_dominos_from_results(Results, a_star_getter, N).
+get_max_dominos_from_results(Results, a_star_max_dominos_getter, N).
 */
 
 /*

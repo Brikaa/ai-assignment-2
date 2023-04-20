@@ -5,8 +5,12 @@
 :- use_module(library(http/http_error)).
 
 :- http_handler(root(.), index, []).
-:- http_handler('/bfs', handle_game_request(bfs, bfs_getter), []).
-:- http_handler('/a_star', handle_game_request(a_star, a_star_getter), []).
+:- http_handler('/bfs/all', handle_game_request(bfs, all_results_getter, bfs_max_dominos_getter), []).
+:- http_handler('/a_star/all', handle_game_request(a_star, all_results_getter, a_star_max_dominos_getter), []).
+:- http_handler('/bfs/optimal', handle_game_request(bfs, bfs_optimal_result_getter, bfs_max_dominos_getter), []).
+:- http_handler(
+    '/a_star/optimal', handle_game_request(a_star, a_star_optimal_result_getter, a_star_max_dominos_getter), []
+).
 :- http_handler('/assets', serve_front_assets, [prefix]).
 
 :- ['engine/game'].
@@ -16,7 +20,7 @@ index(Request) :-
 
 response(Results, MaxDominos, _{ results: Results, maxDominos: MaxDominos }).
 
-handle_game_request(Algorithm, MaxStateGetter, Request) :-
+handle_game_request(Algorithm, ResultsGetter, MaxStateGetter, Request) :-
     /*
     rows: number,
     columns: number,
@@ -29,7 +33,7 @@ handle_game_request(Algorithm, MaxStateGetter, Request) :-
         bomb1: _{ row: R1, column: C1 },
         bomb2: _{ row: R2, column: C2 }
     }),
-    get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, Results),
+    get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, ResultsGetter, Results),
     !,
     get_max_dominos_from_results(Results, MaxStateGetter, MaxDominos),
     response(Results, MaxDominos, Response),
