@@ -1,14 +1,4 @@
-check_main(_) :-
-    source_file('main.pl'), !.
-check_main(_) :-
-    write(
-        "The current working directory is not the root directory of the project, please switch to the root directory"
-    ), nl,
-    write("Halting in 5 seconds"), nl,
-    sleep(5),
-    halt.
-
-:- check_main(_).
+:- prolog_load_context(directory, D), working_directory(_, D).
 
 :- ['web/server'].
 
