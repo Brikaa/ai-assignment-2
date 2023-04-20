@@ -39,7 +39,10 @@
             body: raw
         };
 
-        const response = await fetch(`http://localhost:2005/${algorithm}/${resultType}`, requestOptions);
+        const response = await fetch(
+            `http://localhost:2005/${algorithm}/${resultType}`,
+            requestOptions
+        );
         const responseBody = await response.json();
         if (response.status >= 400) {
             alert(responseBody.error);
@@ -56,6 +59,16 @@
         results.forEach((result) => {
             const table = document.createElement('table');
             resultsContainer.appendChild(table);
+
+            // Creating an invisible row fixes some glitches
+            const columns = result[0].length;
+            const invisibleRow = document.createElement('tr');
+            for (let i = 0; i < columns; ++i) {
+                const cell = document.createElement('td');
+                cell.classList.add('invisible');
+                invisibleRow.appendChild(cell);
+            }
+            table.appendChild(invisibleRow);
 
             result.forEach((row) => {
                 const tableRow = document.createElement('tr');
