@@ -92,9 +92,19 @@ append_last(Xs, Ys, Zs) :- append(Xs, Ys, Zs).
 pop_first([X | Xs], X, Xs).
 always_cheaper_node(<, _, _).
 
-append_in_order(Pred, Xs, Ys, Zs) :-
-    append(Xs, Ys, Ws),
-    predsort(Pred, Ws, Zs).
+sorted_merge(Pred, [X | Xs], [Y | Ys], [X | Zs]) :-
+    call(Pred, <, X, Y),
+    !,
+    sorted_merge(Pred, Xs, [Y | Ys], Zs).
+sorted_merge(Pred, Xs, [Y | Ys], [Y | Zs]) :-
+    !,
+    sorted_merge(Pred, Xs, Ys, Zs).
+sorted_merge(_, [], Ys, Ys) :- !.
+sorted_merge(_, Xs, [], Xs).
+
+append_in_order(Pred, Ordered, Unordered, Zs) :-
+    predsort(Pred, Unordered, Ordered2),
+    sorted_merge(Pred, Ordered, Ordered2, Zs).
 
 a_star_compare_node_costs(>, Node1, Node2) :- Node1.f > Node2.f.
 a_star_compare_node_costs(<, Node1, Node2) :- Node1.f < Node2.f.
