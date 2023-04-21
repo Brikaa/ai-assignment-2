@@ -53,8 +53,7 @@ valid_successor_node(ParentState, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
     ComparePrices = AlgoUtil.compare_node_costs,
     \+((
         member(ExistingNode, Lists.open),
-        call(ComparePrices, Delta, ExistingNode, SuccessorNode),
-        Delta = <
+        call(ComparePrices, <, ExistingNode, SuccessorNode)
     )),
     \+member(ExistingNode, Lists.closed).
 
