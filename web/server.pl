@@ -39,7 +39,7 @@ handle_game_request(Algorithm, ResultsGetter, MaxStateGetter, Request) :-
     response(Results, MaxDominos, Response),
     reply_json_dict(Response).
 
-handle_game_request(_, _, _) :-
+handle_game_request(_, _, _, _) :-
     reply_json_dict(_{ error: "Invalid inputs" }, [status(400)]).
 
 serve_front_assets(Request) :-
