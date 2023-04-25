@@ -51,10 +51,10 @@ valid_successor_node(ParentState, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
     ValidState = StateUtil.valid,
     call(ValidState, SuccessorState),
     create_node(SuccessorState, ExistingNode),
-    ComparePrices = AlgoUtil.compare_node_costs,
+    CompareCosts = AlgoUtil.compare_node_costs,
     \+((
         member(ExistingNode, Lists.open),
-        call(ComparePrices, <, ExistingNode, SuccessorNode)
+        call(CompareCosts, <, ExistingNode, SuccessorNode)
     )),
     \+member(ExistingNode, Lists.closed).
 
@@ -89,7 +89,7 @@ search(Lists, AlgoUtil, StateUtil, Sol) :-
     NewLists = Lists.put(_{open: NewOpenList, closed: NewClosedList}),
     search(NewLists, AlgoUtil, StateUtil, Sol).
 
-% --------------------- Predicates for the specific search algorithms (abstraction applications) ---------------------
+% --------------------- Predicates for the specific search algorithms (abstraction implementation) ---------------------
 
 append_last(Xs, Ys, Zs) :- append(Xs, Ys, Zs).
 pop_first([X | Xs], X, Xs).
