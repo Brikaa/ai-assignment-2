@@ -7,10 +7,12 @@
 :- http_handler(root(.), index, []).
 :- http_handler('/bfs/all', handle_game_request(bfs, all_results_getter, bfs_max_dominos_getter), []).
 :- http_handler('/a_star/all', handle_game_request(a_star, all_results_getter, a_star_max_dominos_getter), []).
+:- http_handler('/ucs/all', handle_game_request(ucs, all_results_getter, a_star_max_dominos_getter), []).
 :- http_handler('/bfs/optimal', handle_game_request(bfs, bfs_optimal_result_getter, bfs_max_dominos_getter), []).
 :- http_handler(
     '/a_star/optimal', handle_game_request(a_star, a_star_optimal_result_getter, a_star_max_dominos_getter), []
 ).
+:- http_handler('/ucs/optimal', handle_game_request(ucs, a_star_optimal_result_getter, a_star_max_dominos_getter), []).
 :- http_handler('/assets', serve_front_assets, [prefix]).
 
 :- ['engine/game'].
