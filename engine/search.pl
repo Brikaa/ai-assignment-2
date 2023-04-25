@@ -19,20 +19,21 @@ Lists = {open: list, closed: list}
 AlgoUtil = {pop: fn, append: fn, compare_node_costs: fn(Delta, X, Y)}
 StateUtil = {goal: fn, action: fn, valid: fn, heuristic: fn}
 search(Lists, AlgoUtil, StateUtil, Sol)
-Node = {
-    state: State,
-    parent: Parent,
-    g: cumulative cost,
-    h: estimated cost till goal,
-    f: g + h
-}
+Node = node(State, Parent, G: cumulative cost, H: estimated cost till goal, F: G + H)
 */
 
-% --------------------- Generic search algorithm ---------------------
+% --------------------- Node structure ---------------------
+create_node(State, node(State, _, _, _, _)).
+create_node(State, Parent, node(State, Parent, _, _, _)).
+create_node(State, Parent, G, H, F, node(State, Parent, G, H, F)).
 
-create_node(State, _{state: State, parent: _, g: _, h: _, f: _}).
-create_node(State, Parent, _{state: State, parent: Parent, g: _, h: _, f: _}).
-create_node(State, Parent, G, H, F, _{state: State, parent: Parent, g: G, h: H, f: F}).
+get_state(Node, State) :- arg(1, Node, State).
+get_parent(Node, Parent) :- arg(2, Node, Parent).
+get_g(Node, G) :- arg(3, Node, G).
+get_h(Node, H) :- arg(4, Node, H).
+get_f(Node, F) :- arg(5, Node, F).
+
+% --------------------- Generic search algorithm ---------------------
 
 get_solution(State, GoalState, Lists, Acc, Sol) :-
     create_node(State, Parent, Node),
@@ -45,7 +46,7 @@ get_solution(_, GoalState, _, Acc, Sol) :-
     append(Acc, [GoalState], Sol).
 
 valid_successor_node(ParentState, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
-    SuccessorState = SuccessorNode.state,
+    get_state(SuccessorNode, SuccessorState),
     \+(ParentState = SuccessorState),
     ValidState = StateUtil.valid,
     call(ValidState, SuccessorState),
@@ -58,12 +59,13 @@ valid_successor_node(ParentState, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
     \+member(ExistingNode, Lists.closed).
 
 get_successor_node(ParentNode, Lists, AlgoUtil, StateUtil, SuccessorNode) :-
-    ParentState = ParentNode.state,
+    get_state(ParentNode, ParentState),
     create_node(SuccessorState, ParentState, SuccessorG, SuccessorH, SuccessorF, SuccessorNode),
     PerformAction = StateUtil.action,
     CalculateHeuristic = StateUtil.heuristic,
     call(PerformAction, ParentState, SuccessorState, Cost),
-    SuccessorG is Cost + ParentNode.g,
+    get_g(ParentNode, ParentG),
+    SuccessorG is Cost + ParentG,
     call(CalculateHeuristic, SuccessorState, SuccessorH),
     SuccessorF is SuccessorG + SuccessorH,
     valid_successor_node(ParentState, Lists, AlgoUtil, StateUtil, SuccessorNode).
@@ -72,8 +74,10 @@ search(Lists, AlgoUtil, StateUtil, Sol) :-
     Pop = AlgoUtil.pop,
     call(Pop, Lists.open, Node, _),
     GoalTest = StateUtil.goal,
-    call(GoalTest, Node.state),
-    get_solution(Node.parent, Node.state, Lists, [], Sol).
+    get_state(Node, State),
+    call(GoalTest, State),
+    get_parent(Node, Parent),
+    get_solution(Parent, State, Lists, [], Sol).
 
 search(Lists, AlgoUtil, StateUtil, Sol) :-
     Pop = AlgoUtil.pop,
@@ -105,9 +109,18 @@ append_in_order(Pred, Ordered, Unordered, Zs) :-
     predsort(Pred, Unordered, Ordered2),
     sorted_merge(Pred, Ordered, Ordered2, Zs).
 
-a_star_compare_node_costs(>, Node1, Node2) :- Node1.f > Node2.f.
-a_star_compare_node_costs(<, Node1, Node2) :- Node1.f < Node2.f.
-a_star_compare_node_costs(<, Node1, Node2) :- Node1.f = Node2.f.
+a_star_compare_node_costs(>, Node1, Node2) :-
+    get_f(Node1, F1),
+    get_f(Node2, F2),
+    F1 > F2.
+a_star_compare_node_costs(<, Node1, Node2) :-
+    get_f(Node1, F1),
+    get_f(Node2, F2),
+    F1 < F2.
+a_star_compare_node_costs(<, Node1, Node2) :-
+    get_f(Node1, F1),
+    get_f(Node2, F2),
+    F1 = F2.
 
 % --------------------- Specific search algorithms ---------------------
 

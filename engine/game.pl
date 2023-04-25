@@ -161,7 +161,7 @@ get_game_results(Rows, Columns, bomb1(R1, C1), bomb2(R2, C2), Algorithm, Results
 % get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), bfs, all_results_getter, Results) ; true.
 % get_game_results(3, 3, bomb1(1, 3), bomb2(2, 1), a_star, all_results_getter, Results) ; true.
 % get_game_results(4, 4, bomb1(1, 3), bomb2(2, 1), a_star, a_star_optimal_result_getter, Results) ; true.
-% time(get_game_results(10, 10, bomb1(1, 3), bomb2(2, 1), a_star, a_star_optimal_result_getter, Results)).
+% time(get_game_results(4, 4, bomb1(1, 3), bomb2(2, 1), a_star, a_star_optimal_result_getter, Results)).
 
 count(X, [X | Xs], Acc, Count) :-
     !,
