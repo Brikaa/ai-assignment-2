@@ -90,10 +90,10 @@ place_vertical_domino(Matrix, NewMatrix) :-
     insert_at(Y2, NewDownRow, IntermediateMatrix, NewMatrix).
 
 insertable_square(Matrix, X, Y) :-
-    get_coords_of_horizontal_empty_cells(Matrix, cell1(X, Y), _, _),
-    !.
+    get_coords_of_horizontal_empty_cells(Matrix, cell1(X, Y), _, _).
 
 insertable_square(Matrix, X, Y) :-
+    \+(get_coords_of_horizontal_empty_cells(Matrix, cell1(X, Y), _, _)),
     get_coords_of_vertical_empty_cells(Matrix, cell1(X, Y), _, _, _).
 
 insertable_squares_heuristic(State, H) :-
