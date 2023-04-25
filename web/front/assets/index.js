@@ -12,7 +12,9 @@
         e.preventDefault();
 
         const resultsContainer = document.getElementById('resultsContainer');
+        const maxDominosContainer = document.getElementById('maxDominos');
         resultsContainer.innerHTML = '';
+        maxDominosContainer.innerHTML = '';
 
         const formData = Object.fromEntries(new FormData(form));
         const requestBody = {
@@ -52,9 +54,7 @@
         const IMAGE_WIDTH = 50;
         const IMAGE_HEIGHT = 50;
 
-        document.getElementById(
-            'maxDominos'
-        ).innerText = `The maximum number of dominos that can be placed is ${maxDominos}`;
+        maxDominosContainer.innerText = `The maximum number of dominos that can be placed is ${maxDominos}`;
 
         results.forEach((result) => {
             const table = document.createElement('table');
